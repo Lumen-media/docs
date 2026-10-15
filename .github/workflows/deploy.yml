@@ -40,21 +40,62 @@ jobs:
             fi
           done
 
-      - name: Generate crate index redirects
+      - name: Generate rust docs index and placeholders
         run: |
-          shopt -s nullglob
-          for repo_dir in dist/rust/*/; do
-            [ -d "$repo_dir" ] || continue
-            [ -f "${repo_dir}index.html" ] && continue
-            crate=$(find "$repo_dir" -mindepth 2 -maxdepth 2 -name index.html | sort | head -n1)
-            [ -n "$crate" ] || continue
-            crate_name=$(basename "$(dirname "$crate")")
-            cat > "${repo_dir}index.html" <<EOF
+          mkdir -p dist/rust
+          RUST_REPOS="lumen module-sdk community-modules lumen-locales"
+
+          available=""
+          for repo in $RUST_REPOS; do
+            dir="dist/rust/$repo"
+            if [ -f "$dir/index.html" ]; then
+              available="$available $repo"
+            elif [ -d "$dir" ] && find "$dir" -mindepth 2 -maxdepth 2 -name index.html | grep -q .; then
+              available="$available $repo"
+            fi
+          done
+
+          for repo in $RUST_REPOS; do
+            dir="dist/rust/$repo"
+            [ -f "$dir/index.html" ] && continue
+            crate=""
+            if [ -d "$dir" ]; then
+              crate=$(find "$dir" -mindepth 2 -maxdepth 2 -name index.html | sort | head -n1)
+            fi
+            mkdir -p "$dir"
+            if [ -n "$crate" ]; then
+              crate_name=$(basename "$(dirname "$crate")")
+              cat > "$dir/index.html" <<EOF
           <!DOCTYPE html>
           <html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./${crate_name}/"><title>Redirecting</title></head>
           <body>Redirecting to <a href="./${crate_name}/">${crate_name}</a>...</body></html>
           EOF
+            else
+              cat > "$dir/index.html" <<EOF
+          <!DOCTYPE html>
+          <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+          <title>Rust API Docs - ${repo}</title>
+          <style>body{font-family:system-ui,-apple-system,sans-serif;max-width:640px;margin:4rem auto;padding:0 1.5rem;color:#1f2328;line-height:1.6}h1{font-size:1.4rem}code{background:#eff1f3;padding:.15em .35em;border-radius:4px}a{color:#0969da}.muted{color:#6e7781}</style></head>
+          <body><h1>Rust API Docs &mdash; ${repo}</h1>
+          <p>The Rust API documentation for <code>${repo}</code> is not available yet.</p>
+          <p class="muted">It will appear here automatically after the documentation sync workflow runs for that repository.</p>
+          <p><a href="../">&larr; All Rust API Docs</a> &middot; <a href="../../">Docs home</a></p>
+          </body></html>
+          EOF
+            fi
           done
+
+          {
+            echo '<!DOCTYPE html>'
+            echo '<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">'
+            echo '<title>Rust API Docs</title>'
+            echo '<style>body{font-family:system-ui,-apple-system,sans-serif;max-width:720px;margin:4rem auto;padding:0 1.5rem;color:#1f2328;line-height:1.6}h1{font-size:1.5rem}li{margin:.5rem 0}a{color:#0969da}</style></head>'
+            echo '<body><h1>Rust API Docs</h1><ul>'
+            for repo in $available; do
+              echo "  <li><a href=\"./$repo/\">$repo</a></li>"
+            done
+            echo '</ul><p><a href="../">&larr; Docs home</a></p></body></html>'
+          } > dist/rust/index.html
 
       - name: Setup Pages
         uses: actions/configure-pages@v4
