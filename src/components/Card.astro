@@ -1,0 +1,35 @@
+---
+interface Props {
+	variant?: 'default' | 'outlined' | 'elevated';
+	padding?: 'none' | 'sm' | 'md' | 'lg';
+	class?: string;
+	href?: string;
+}
+const {
+	variant = 'default',
+	padding = 'md',
+	class: className = '',
+	href,
+	...attrs
+} = Astro.props;
+
+const variants = {
+	default: 'bg-[var(--card)] text-[var(--card-foreground)] border border-[var(--card-border)]',
+	outlined: 'bg-transparent text-[var(--foreground)] border border-[var(--border)]',
+	elevated: 'bg-[var(--card)] text-[var(--card-foreground)] border-none shadow-lg',
+};
+
+const paddings = {
+	none: '',
+	sm: 'p-4',
+	md: 'p-6',
+	lg: 'p-8',
+};
+
+const Tag = href ? 'a' : 'div';
+const classes = `rounded-[var(--radius)] ${variants[variant]} ${paddings[padding]} transition-shadow hover:shadow-md ${className}`;
+---
+
+<{Tag} {...attrs} class={classes} href={href}>
+	<slot />
+</{Tag}>

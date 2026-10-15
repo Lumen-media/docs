@@ -47,6 +47,12 @@ export default defineConfig({
 						{ label: 'Lumen', link: '/rust/lumen/' },
 					],
 				},
+				{
+					label: 'Design System',
+					items: [
+						{ label: 'Componentes', slug: 'components-demo' },
+					],
+				},
 			],
 			editLink: {
 				baseUrl: 'https://github.com/Lumen-media/docs/edit/main/',

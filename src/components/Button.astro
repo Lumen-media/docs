@@ -1,0 +1,57 @@
+---
+interface Props {
+	variant?: 'primary' | 'secondary' | 'outline' | 'ghost' | 'destructive';
+	size?: 'sm' | 'md' | 'lg';
+	href?: string;
+	target?: string;
+	disabled?: boolean;
+	class?: string;
+	type?: 'button' | 'submit' | 'reset';
+}
+const {
+	variant = 'primary',
+	size = 'md',
+	href,
+	target,
+	disabled = false,
+	class: className = '',
+	type = 'button',
+	...attrs
+} = Astro.props;
+
+const base = 'inline-flex items-center justify-center font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50';
+
+const variants = {
+	primary: 'bg-[var(--primary)] text-[var(--primary-foreground)] hover:bg-[var(--primary)]/90',
+	secondary: 'bg-[var(--secondary)] text-[var(--secondary-foreground)] hover:bg-[var(--secondary)]/80',
+	outline: 'border border-[var(--border)] bg-transparent hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]',
+	ghost: 'hover:bg-[var(--accent)] hover:text-[var(--accent-foreground)]',
+	destructive: 'bg-[var(--destructive)] text-[var(--destructive-foreground)] hover:bg-[var(--destructive)]/90',
+};
+
+const sizes = {
+	sm: 'h-8 px-3 text-xs rounded-[calc(var(--radius)*0.5)]',
+	md: 'h-10 px-4 py-2 text-sm rounded-[var(--radius)]',
+	lg: 'h-12 px-8 text-base rounded-[calc(var(--radius)*1.5)]',
+};
+
+const classes = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+
+const Tag = href ? 'a' : 'button';
+---
+
+<{Tag}
+	{...attrs}
+	class={classes}
+	href={href}
+	target={target}
+	type={href ? undefined : type}
+	disabled={disabled && !href}
+	aria-disabled={disabled && !!href}
+>
+	<slot />
+</{Tag}>
+
+<style is:global>
+	:where(.sl-markdown-content) .sl-button { @apply inline-flex items-center justify-center; }
+</style>

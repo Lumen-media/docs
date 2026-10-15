@@ -1,0 +1,49 @@
+---
+interface Props {
+	variant?: 'default' | 'secondary' | 'destructive' | 'outline' | 'success' | 'warning' | 'info';
+	size?: 'sm' | 'md' | 'lg';
+	class?: string;
+	dot?: boolean;
+}
+const {
+	variant = 'default',
+	size = 'md',
+	class: className = '',
+	dot = false,
+	...attrs
+} = Astro.props;
+
+const variants = {
+	default: 'bg-[var(--primary)] text-[var(--primary-foreground)]',
+	secondary: 'bg-[var(--secondary)] text-[var(--secondary-foreground)]',
+	destructive: 'bg-[var(--destructive)] text-[var(--destructive-foreground)]',
+	outline: 'text-[var(--foreground)] border border-[var(--border)]',
+	success: 'bg-[var(--color-green)] text-white',
+	warning: 'bg-[var(--color-amber)] text-white',
+	info: 'bg-[var(--color-cyan)] text-white',
+};
+
+const sizes = {
+	sm: 'px-2 py-0.5 text-xs',
+	md: 'px-2.5 py-1 text-sm',
+	lg: 'px-3 py-1 text-base',
+};
+
+const dotColors = {
+	default: 'bg-[var(--primary)]',
+	secondary: 'bg-[var(--muted-foreground)]',
+	destructive: 'bg-[var(--destructive)]',
+	outline: 'bg-[var(--muted-foreground)]',
+	success: 'bg-[var(--color-green)]',
+	warning: 'bg-[var(--color-amber)]',
+	info: 'bg-[var(--color-cyan)]',
+};
+
+const classes = `inline-flex items-center gap-1.5 font-medium rounded-full border-0 ${variants[variant]} ${sizes[size]} ${className}`;
+const dotClass = `w-1.5 h-1.5 rounded-full ${dotColors[variant]}`;
+---
+
+<span {...attrs} class={classes}>
+	{dot && <span class={dotClass} aria-hidden="true" />}
+	<slot />
+</span>

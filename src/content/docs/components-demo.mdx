@@ -1,0 +1,109 @@
+---
+title: 'Componentes Demo'
+---
+
+import { Button, Card, Badge, Alert } from '../../components';
+
+<div class="max-w-4xl mx-auto p-8 space-y-12">
+	<h1 class="text-4xl font-bold tracking-tight">Componentes do Design System</h1>
+	<p class="text-[var(--muted-foreground)]">Usando tokens OKLCH + componentes Astro nativos</p>
+
+	<section>
+		<h2 class="text-2xl font-semibold mb-4">Button</h2>
+		<div class="flex flex-wrap gap-3">
+			<Button variant="primary">Primary</Button>
+			<Button variant="secondary">Secondary</Button>
+			<Button variant="outline">Outline</Button>
+			<Button variant="ghost">Ghost</Button>
+			<Button variant="destructive">Destructive</Button>
+		</div>
+		<div class="flex flex-wrap gap-3 mt-4">
+			<Button size="sm" variant="primary">Small</Button>
+			<Button size="md" variant="primary">Medium</Button>
+			<Button size="lg" variant="primary">Large</Button>
+		</div>
+		<div class="flex flex-wrap gap-3 mt-4">
+			<Button disabled variant="primary">Disabled</Button>
+			<Button href="/docs/lumen/overview/" variant="primary">Link Button</Button>
+		</div>
+	</section>
+
+	<section>
+		<h2 class="text-2xl font-semibold mb-4">Card</h2>
+		<div class="grid gap-4 md:grid-cols-3">
+			<Card variant="default" padding="md">
+				<h3 class="font-semibold mb-2">Default Card</h3>
+				<p class="text-[var(--muted-foreground)]">Com border sutil e background card</p>
+			</Card>
+			<Card variant="outlined" padding="md">
+				<h3 class="font-semibold mb-2">Outlined Card</h3>
+				<p class="text-[var(--muted-foreground)]">Sem background, só border</p>
+			</Card>
+			<Card variant="elevated" padding="md">
+				<h3 class="font-semibold mb-2">Elevated Card</h3>
+				<p class="text-[var(--muted-foreground)]">Com sombra, sem border</p>
+			</Card>
+		</div>
+	</section>
+
+	<section>
+		<h2 class="text-2xl font-semibold mb-4">Badge</h2>
+		<div class="flex flex-wrap gap-3">
+			<Badge variant="default">Default</Badge>
+			<Badge variant="secondary">Secondary</Badge>
+			<Badge variant="destructive">Destructive</Badge>
+			<Badge variant="outline">Outline</Badge>
+			<Badge variant="success">Success</Badge>
+			<Badge variant="warning">Warning</Badge>
+			<Badge variant="info">Info</Badge>
+		</div>
+		<div class="flex flex-wrap gap-3 mt-4">
+			<Badge size="sm" variant="default" dot>Small</Badge>
+			<Badge size="md" variant="success" dot>Medium</Badge>
+			<Badge size="lg" variant="warning" dot>Large</Badge>
+		</div>
+	</section>
+
+	<section>
+		<h2 class="text-2xl font-semibold mb-4">Alert</h2>
+		<div class="space-y-4">
+			<Alert variant="default" title="Informação">
+				Esta é uma mensagem informativa padrão usando o token accent.
+			</Alert>
+			<Alert variant="destructive" title="Erro">
+				Algo deu errado. Verifique os dados e tente novamente.
+			</Alert>
+			<Alert variant="success" title="Sucesso">
+				Operação concluída com êxito!
+			</Alert>
+			<Alert variant="warning" title="Atenção">
+				Esta ação não pode ser desfeita.
+			</Alert>
+			<Alert variant="info" title="Dica">
+				Use <kbd class="px-1.5 py-0.5 bg-[var(--muted)] rounded text-xs">Ctrl+K</kbd> para abrir a busca.
+			</Alert>
+		</div>
+	</section>
+
+	<section>
+		<h2 class="text-2xl font-semibold mb-4">Composição</h2>
+		<Card variant="default" padding="lg" class="space-y-4">
+			<div>
+				<h3 class="font-semibold mb-2">Card com componentes internos</h3>
+				<p class="text-[var(--muted-foreground)]">Badges, botões e alerts funcionam juntos</p>
+			</div>
+			<div class="flex flex-wrap gap-2">
+				<Badge variant="info" dot>Novo</Badge>
+				<Badge variant="success" dot>Ativo</Badge>
+				<Badge variant="warning" dot>Beta</Badge>
+			</div>
+			<Alert variant="info" title="Disponível">
+				Estes componentes usam suas variáveis CSS OKLCH — funcionam em light e dark mode automaticamente.
+			</Alert>
+			<div class="flex gap-3 pt-2">
+				<Button variant="primary">Ação principal</Button>
+				<Button variant="outline">Secundária</Button>
+			</div>
+		</Card>
+	</section>
+</div>
