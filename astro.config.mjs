@@ -5,6 +5,7 @@ import starlight from '@astrojs/starlight';
 export default defineConfig({
 	site: 'https://lumen-media.github.io',
 	base: '/docs/',
+	trailingSlash: 'always',
 	output: 'static',
 	integrations: [
 		starlight({
