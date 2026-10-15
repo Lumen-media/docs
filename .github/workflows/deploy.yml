@@ -31,6 +31,31 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Copy synced docs into build output
+        run: |
+          for dir in lumen module-sdk community-modules lumen-locales rust; do
+            if [ -d "$dir" ]; then
+              mkdir -p "dist/$dir"
+              cp -r "$dir/." "dist/$dir/"
+            fi
+          done
+
+      - name: Generate crate index redirects
+        run: |
+          shopt -s nullglob
+          for repo_dir in dist/rust/*/; do
+            [ -d "$repo_dir" ] || continue
+            [ -f "${repo_dir}index.html" ] && continue
+            crate=$(find "$repo_dir" -mindepth 2 -maxdepth 2 -name index.html | sort | head -n1)
+            [ -n "$crate" ] || continue
+            crate_name=$(basename "$(dirname "$crate")")
+            cat > "${repo_dir}index.html" <<EOF
+          <!DOCTYPE html>
+          <html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0; url=./${crate_name}/"><title>Redirecting</title></head>
+          <body>Redirecting to <a href="./${crate_name}/">${crate_name}</a>...</body></html>
+          EOF
+          done
+
       - name: Setup Pages
         uses: actions/configure-pages@v4
 
