@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ModuleNetRequestBody","NetMethod","NetResponseType"],"fn":["build_request","build_url","check_url_allowed","is_private_host","match_url_pattern","module_net_request","read_response_body"],"struct":["ModuleNetError","ModuleNetRequest","ModuleNetResponse","MultipartPart"]};

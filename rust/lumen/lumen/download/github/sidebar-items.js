@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["fetch_content_length","fetch_latest_ffmpeg","fetch_latest_locales_tag","fetch_latest_node","fetch_latest_ytdlp","fetch_locale_file","fetch_release","is_windows","match_ffmpeg_asset","match_ytdlp_asset","platform_key"],"struct":["GitHubAsset","GitHubRelease","LocalRelease","NodeRelease","ToolRelease"]};

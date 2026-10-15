@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["load_manifest"],"struct":["ModuleAuthor","ModuleManifest","ModulePermissions"]};

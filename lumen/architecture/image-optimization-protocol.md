@@ -1,0 +1,260 @@
+# Image Optimization Protocol (`lumen://` / `lumen-thumb://`)
+
+## Overview
+
+Lumen centralizes image loading, optimization and caching in a single Rust
+URI scheme handler. Instead of each consumer reading a raw file, decoding and
+resizing it itself, every image load in the app flows through one of two custom
+schemes registered with the WebView:
+
+| Scheme | Purpose |
+|--------|---------|
+| `lumen://` | Full / optimized image (re-encoded JPEG) |
+| `lumen-thumb://` | Downscaled thumbnail (explicit `w`/`h`) |
+
+The WebView resolves these URLs to the Rust handler, which:
+
+1. Decodes the source (local file or remote URL),
+2. Resizes / re-encodes to JPEG,
+3. Caches the result on disk,
+4. Serves cached entries on subsequent requests with size tolerance,
+5. Special-cases Unsplash URLs to use imgix directly (no local re-encode).
+
+A single `<img src>` change can replace the old blob-URL pipeline for any
+consumer, and modules receive the optimized URLs from the SDK without needing
+their own changes.
+
+```
+Frontend (React)                     Rust handler (protocol.rs)
+┌───────────────┐                    ┌───────────────────────────────┐
+│ <img src=     │                    │ handle_lumen_request          │
+│  "lumen-thumb://│                   │  ┌ parse query (src,w,h)      │
+│   ?src=...&w=.."│                   │  └ process(...)               │
+│  │            │                    │     ├ full  → lumen://        │
+│  │  WebView2   │                   │     ├ sized → lumen-thumb://   │
+│  └──► scheme ──┼───────► handler ──┼──► src: local path | http URL  │
+│               │                    │     ├ cache check (tolerance)  │
+│               │                    │     ├ generate JPEG            │
+│               │                    │     └ store to disk            │
+└───────────────┘                    └───────────────────────────────┘
+```
+
+---
+
+## URL Format
+
+Both schemes accept the source as a percent-encoded query param. The
+`lumen-thumb://` scheme takes a single `w` (width); the height is always
+derived from the source image's aspect ratio, so the result is never
+distorted. Cropping is left to the frontend (e.g. CSS `object-fit`).
+
+```
+lumen://?src=<url-encoded source>
+lumen-thumb://?src=<url-encoded source>&w=<width>
+```
+
+- `<source>` is an absolute local path (`C:\Users\...\wallpaper.jpg`) or an
+  `http(s)` URL (e.g. an Unsplash photo URL).
+- For the WebView to load these in `<img>` tags, the `http://` forms also work
+  (WebView2 requires the http form for some contexts):
+
+```
+http://lumen.localhost/?src=...
+http://lumen-thumb.localhost/?src=...&w=...
+```
+
+Both are registered in `src-tauri/src/main.rs`:
+
+```rust
+.register_uri_scheme_protocol("lumen", thumbnail::protocol::handle_lumen_request)
+.register_uri_scheme_protocol("lumen-thumb", thumbnail::protocol::handle_lumen_request)
+```
+
+The handler detects which scheme was hit by checking the URI string for
+`lumen-thumb`.
+
+### Examples
+
+```ts
+// Full optimized local image
+`lumen://?src=${encodeURIComponent('C:\\Users\\me\\Pictures\\bg.jpg')}`
+
+// Thumbnail of the same file, max width 200 (height proportional to source)
+`lumen-thumb://?src=${encodeURIComponent('C:\\Users\\me\\Pictures\\bg.jpg')}&w=200`
+
+// Full remote Unsplash image
+`lumen://?src=${encodeURIComponent('https://images.unsplash.com/photo-xxx')}`
+```
+
+---
+
+## Cache
+
+Cache root is resolved at runtime from `app_data_dir()`:
+
+```
+{app_data_dir}/lumen/cache/
+├── thumbs/           — local files, downscaled
+├── remote-thumbs/    — remote URLs, downscaled (incl. Unsplash)
+└── (remote full re-encodes share remote-thumbs/{hash}_full.jpg)
+```
+
+Filename scheme:
+
+```
+sized:  {blake3(src)}_{w}x{h}.jpg
+full:   {blake3(src)}_full.jpg
+```
+
+- Hash is BLAKE3 over the raw source string (path or URL).
+- Cache is persistent across app restarts.
+- Windows example:
+  `C:\Users\<user>\AppData\Roaming\com.lumen.media\lumen\cache\thumbs\`
+
+### Size Tolerance
+
+A cached entry can serve a request up to **50% larger** than requested without
+regenerating. A `w=200` request accepts any cached entry with
+`200 <= w <= 300`; the smallest-area matching entry wins.
+
+```rust
+const TOLERANCE: f64 = 1.5; // 50%
+```
+
+This avoids generating near-duplicate sizes while still returning an image at
+least as large as requested. Height is not matched directly — it follows the
+source aspect ratio, so it is implied by the width.
+
+### In-Memory Index
+
+An in-memory `HashMap` (`INDEX`) caches the directory scan per
+`{dir}::{hash}` so the handler does not re-read the cache folder on every
+request. Entries are inserted lazily on first access and after each
+generation.
+
+---
+
+## Behavior by Source Type
+
+### Local file — full (`lumen://`)
+
+| Extension | Behavior |
+|-----------|----------|
+| Image (`png`, `jpg`, `jpeg`, `webp`, `bmp`, `gif`) | Decode + re-encode JPEG quality 88, cached as `{hash}_full.jpg` |
+| Video (`mp4`, `mov`, `m4v`, `webm`, `avi`, `mkv`) | Pass-through raw bytes, `Content-Type` from extension |
+| Other | `415 Unsupported Media Type` |
+
+### Local file — sized (`lumen-thumb://`)
+
+| Extension | Behavior |
+|-----------|----------|
+| Image | Read source dims, `h = w × oh / ow`, `thumbnail(w, h)` + JPEG quality 82 |
+| Video | First decodable frame via `video_thumb::generate_box_width` (height derived from frame aspect) |
+| Other | `415 Unsupported Media Type` |
+
+### Remote URL — full (`lumen://`)
+
+- **Unsplash:** uses the imgix params (`w`, `h`, `q`, `fit`, `fm`, `auto`) to
+  fetch an exact-size image from Unsplash directly — **no local re-encode**.
+  The result is cached (`{hash}_full.jpg`) so it works offline later.
+- **Other:** fetch, try to decode as image → re-encode JPEG quality 88; if it
+  is not an image (e.g. video), pass raw bytes through with a mime guessed
+  from the URL.
+
+### Remote URL — sized (`lumen-thumb://`)
+
+- **Unsplash:** builds an imgix URL with the requested `w` (imgix preserves the
+  aspect ratio when only `w` is given), fetches and caches it under the
+  `{hash}_{w}x{h}.jpg` key with the actual returned dims (usable offline).
+- **Other:** fetch + decode + derive `h` from source aspect + `thumbnail(w, h)`
+  + JPEG quality 82.
+
+---
+
+## Unsplash Special Case
+
+Unsplash image URLs are served by an imgix CDN that can resize on the fly via
+query params. Instead of downloading the full image and re-encoding it locally,
+the handler appends imgix params and lets Unsplash return the image directly:
+
+```rust
+unsplash_optimized(src, Some(w), None)  // w, q=80, fit=max, fm=jpg, auto=format
+```
+
+`fit=max` (only `w` given) keeps the aspect ratio; `fit=crop` is only used when
+both `w` and `h` are supplied. Existing params on the source URL (e.g. `ixid`,
+`ixlib`) are preserved. The bytes returned by Unsplash are written straight to
+the cache (no decode/encode round-trip), so once fetched they remain available
+offline.
+
+---
+
+## Mime Handling
+
+Every `200` response includes:
+
+```
+Content-Type: <mime>                (image/jpeg for sized/re-encoded)
+Access-Control-Allow-Origin: *
+Cache-Control: public, max-age=31536000, immutable
+```
+
+The `Cache-Control: immutable` reflects that cache keys are content-addressed
+by source, so a URL always maps to the same bytes.
+
+---
+
+## Frontend Usage
+
+The frontend never builds these URLs manually except through the SDK helper.
+In the themes SDK (`src/modules/apis/domain.ts`) a small helper produces the
+URLs when a background is a local file:
+
+```ts
+function optimizedBgUrl(src: string, w?: number): string {
+  const query = new URLSearchParams({ src });
+  if (w) query.set('w', String(w));
+  const scheme = w ? 'lumen-thumb' : 'lumen';
+  return `${scheme}://opt?${query.toString()}`;
+}
+```
+
+`defaultBackground()` returns `lumen://…` (full), and
+`onDefaultBackgroundChange()` returns `lumen://…` for `src` plus
+`lumen-thumb://…?w=200` for `thumb`. Modules (e.g. bible) that render
+`bg.src` / `bg.thumb` in `<img>` tags automatically use the optimized pipeline
+with zero module changes.
+
+---
+
+## Error Handling
+
+| Scenario | Response |
+|----------|----------|
+| Missing `src` param | `400 Bad Request` |
+| Local file does not exist | `404 file not found` |
+| Unsupported extension | `415 Unsupported Media Type` |
+| Image decode failure | `400 image decode: …` |
+| Upstream fetch failure | `502 fetch …` |
+| Cache I/O failure | `500` |
+
+The frontend should handle non-`200` responses (broken image) and fall back to
+a placeholder.
+
+---
+
+## Relationship to the Legacy Thumbnail System
+
+The previous system (`thumbnail-cache-architecture.md`) used a Tauri command
+`get_thumbnail` plus `thumbnail-service.ts` which read a cached JPEG and
+converted it to a blob URL for `<img>` tags. That pipeline has been fully
+removed: all UI consumers now build `http://lumen-thumb.localhost?src=...&w=...`
+URLs via `lumenUrl()`/`lumenThumbUrl()` (see `src/services/lumen-url.ts`) and
+hand the resolution to the Rust protocol, which centralizes caching, size
+tolerance and remote fetch/downscale. No blob URLs, no per-consumer resize
+logic in JS.
+
+`thumbnail-service.ts` was deleted along with its blob-URL pipeline. The
+`get_thumbnail` / `get_remote_thumbnail` Tauri commands remain registered as a
+stable module/SDK API (`src-tauri/src/thumbnail/mod.rs`), and the protocol's
+image/video generators live in the same module.

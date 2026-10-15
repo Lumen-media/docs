@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["cancel_download","check_dependencies","download_dependencies","download_video","get_download_status","initialize_download_state","install_cookies_file","list_dependencies","tools_dir_from_app","validate_cookies"],"mod":["dependencies","downloader","github"],"struct":["DownloadState","DownloadStatusInfo"]};

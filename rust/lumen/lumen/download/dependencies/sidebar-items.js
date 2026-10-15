@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["check_dependencies","download_dependencies","download_file","extract_ffmpeg_zip","extract_node_zip","ffmpeg_binary_name","ffprobe_binary_name","list_dependencies","load_versions","save_versions","tools_dir","versions_path","ytdlp_binary_name"],"struct":["DependencyInfo","DependencyStatus","ToolInfo","ToolVersions"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["copy_dir_all","extract_manifest_from_archive","resolve_archive_entry","resolve_module_dest"],"struct":["Installer"]};

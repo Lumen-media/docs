@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DEV_SERVER_PORT"],"fn":["disable_module","install_module","list_modules","reload_module","serve_module_file","start_dev_server","uninstall_module"],"struct":["AppState","InstallBody","ModuleListItem"]};

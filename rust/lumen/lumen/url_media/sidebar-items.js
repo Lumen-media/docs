@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["cache_youtube_thumbnail","canonicalize_youtube_url","fetch_oembed","is_valid_video_id","parse_youtube_url","resolve_youtube"],"struct":["OEmbedResponse","UrlMediaMetadata","YouTubeUrl"]};

@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["cleanup_session","get_streaming_config","get_streaming_status","initialize_streaming_state","push_stream_blank","push_stream_slide","set_mobile_preview_device","set_stream_content_protected","set_stream_device_volume","set_stream_master_volume","update_streaming_config"],"struct":["MobilePeer","StreamManager","StreamingState"]};

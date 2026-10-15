@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["MAX_FILE_BYTES"],"fn":["apply_locale","check_locales","list_locales","load_languages","load_sync","locales_dir","save_sync","sync_locales","sync_path","validate_locale_json"],"struct":["LanguageRef","LocaleInfo","LocaleStatus","LocaleSync"]};

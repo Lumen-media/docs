@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["APP_PREVIEW_FPS","APP_PREVIEW_HEIGHT","APP_PREVIEW_WIDTH"],"fn":["capture_anchor","capture_preview_rgb","create_encoder","emit_debug","encode_h264_frame","generate_synthetic_rgb","now_ms","resize_rgba_to_rgb_nearest","start_app_preview_producer"]};

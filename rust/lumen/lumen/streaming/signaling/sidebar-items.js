@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["StreamType"],"fn":["add_webrtc_ice_candidate","create_peer_connection","h264_codec_capability","h264_passthrough_codec_capability","handle_mobile_offer","handle_session_closed","opus_codec_capability","set_webrtc_answer","subscribe_stream","unsubscribe_stream"],"struct":["StreamErrorPayload","WebRtcIceCandidatePayload"]};

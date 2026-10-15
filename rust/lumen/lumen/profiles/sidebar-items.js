@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["profile_delete","profile_list","profile_save","profiles_dir"],"struct":["DefaultBackground","Profile"]};

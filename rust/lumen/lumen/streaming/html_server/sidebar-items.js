@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["HTML_TEMPLATE"],"fn":["handle_html_ws","html_health","html_index","html_ws"],"struct":["HtmlServerRuntime","HtmlServerState","SlideUpdate"]};

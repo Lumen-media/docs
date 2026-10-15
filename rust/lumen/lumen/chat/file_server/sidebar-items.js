@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["guess_mime","handle_request"],"struct":["ChatFileServer"]};

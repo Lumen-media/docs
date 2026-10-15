@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extract_background","lyric_build_search_content","lyric_parse","lyric_serialize","parse_frontmatter","parse_slides"],"struct":["LyricData","LyricMetadata","LyricSlide"]};

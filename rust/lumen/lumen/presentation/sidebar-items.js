@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["extract_presentation_metadata","extract_text_from_xml","extract_title","parse_slide_index"],"struct":["PresentationMeta","SlideText"]};

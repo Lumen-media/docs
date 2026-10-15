@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["chat_db_path","chat_files_dir","clear_chat_history","delete_chat_message","desktop_name","get_chat_config","get_chat_messages","initialize_chat_state","send_chat_file","send_chat_message","send_chat_reaction","send_chat_typing","set_chat_config"],"mod":["file_server","store"],"struct":["ChatReactionResult","ChatState","ChatStateInner"]};
