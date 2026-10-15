@@ -1,0 +1,27 @@
+---
+title: 'Module SDK Overview'
+description: 'Build modules for Lumen'
+---
+
+# Module SDK
+
+The Module SDK allows you to extend Lumen with custom functionality.
+
+## Creating a Module
+
+```rust
+use lumen_sdk::prelude::*;
+
+#[lumen_module]
+pub struct MyModule;
+
+impl Module for MyModule {
+    fn name(&self) -> &str {
+        "my-module"
+    }
+}
+```
+
+## API Reference
+
+See [API Reference](/module-sdk/api/) for detailed documentation.

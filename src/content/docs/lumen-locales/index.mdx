@@ -1,0 +1,25 @@
+---
+title: 'Locales & Internationalization'
+description: 'Translation and locale support for Lumen'
+---
+
+# Locales
+
+Lumen supports full internationalization through the `lumen-locales` crate.
+
+## Supported Languages
+
+- English (en) - Default
+- Portuguese (pt-BR)
+- Spanish (es)
+- French (fr)
+- German (de)
+
+## Usage
+
+```rust
+use lumen_locales::{Locale, Translator};
+
+let translator = Translator::new(Locale::PtBr);
+let msg = translator.t("welcome");
+```

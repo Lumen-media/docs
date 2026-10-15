@@ -1,0 +1,28 @@
+---
+title: 'Getting Started with Lumen'
+description: 'Install and run your first Lumen project'
+---
+
+# Getting Started
+
+## Installation
+
+```bash
+cargo add lumen
+```
+
+## Your First Project
+
+```rust
+use lumen::prelude::*;
+
+fn main() {
+    let app = Lumen::new();
+    app.run();
+}
+```
+
+## Next Steps
+
+- [Module SDK](/module-sdk/overview/) - Extend Lumen with modules
+- [Community Modules](/community-modules/) - Browse available modules

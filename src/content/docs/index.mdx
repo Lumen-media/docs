@@ -1,0 +1,43 @@
+---
+title: 'Lumen-media Documentation'
+description: 'Centralized documentation for the Lumen-media organization'
+template: splash
+hero:
+  tagline: High-performance media processing framework built in Rust
+  actions:
+    - text: Get Started →
+      link: /lumen/getting-started/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/Lumen-media
+      icon: github
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## Core Packages
+
+<CardGrid stagger>
+  <Card title="Lumen Core" icon="cube" href="/lumen/overview/">
+    The main media processing framework
+  </Card>
+  <Card title="Module SDK" icon="puzzle" href="/module-sdk/overview/">
+    Build custom modules and extensions
+  </Card>
+  <Card title="Community Modules" icon="boxes" href="/community-modules/">
+    Browse available modules
+  </Card>
+  <Card title="Locales (i18n)" icon="globe" href="/lumen-locales/">
+    Internationalization support
+  </Card>
+</CardGrid>
+
+## Rust API Documentation
+
+Auto-generated from source code via `cargo doc`:
+
+- [Lumen](/rust/lumen/)
+- [Module SDK](/rust/module-sdk/)
+- [Community Modules](/rust/community-modules/)
+- [Locales](/rust/lumen-locales/)

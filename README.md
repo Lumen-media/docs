@@ -1,21 +1,49 @@
-# Lumen-media Centralized Documentation
+# Starlight Starter Kit: Basics
 
-Central documentation hub for Lumen-media organization, deployed via GitHub Pages at https://lumen-media.github.io/docs/
+[![Built with Starlight](https://astro.badg.es/v2/built-with-starlight/tiny.svg)](https://starlight.astro.build)
 
-## Structure
+```
+npm create astro@latest -- --template starlight
+```
 
-- `lumen/` - Lumen core documentation
-- `module-sdk/` - Module SDK documentation
-- `community-modules/` - Community modules documentation
-- `lumen-locales/` - Localization documentation
-- `rust/` - Generated Rust API documentation (from `cargo doc`)
+> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
 
-## Deployment
+## 🚀 Project Structure
 
-Automatic via GitHub Actions on push to main branch.
+Inside of your Astro + Starlight project, you'll see the following folders and files:
 
-## Syncing from Source Repos
+```
+.
+├── public/
+├── src/
+│   ├── assets/
+│   ├── content/
+│   │   └── docs/
+│   └── content.config.ts
+├── astro.config.mjs
+├── package.json
+└── tsconfig.json
+```
 
-Each source repo uses the reusable workflow in `.github/workflows/sync-docs.yml` to push documentation here on changes to `docs/**` or `Cargo.toml`.
+Starlight looks for `.md` or `.mdx` files in the `src/content/docs/` directory. Each file is exposed as a route based on its file name.
 
-See [SETUP_INSTRUCTIONS.md](SETUP_INSTRUCTIONS.md) for setup details.
+Images can be added to `src/assets/` and embedded in Markdown with a relative link.
+
+Static assets, like favicons, can be placed in the `public/` directory.
+
+## 🧞 Commands
+
+All commands are run from the root of the project, from a terminal:
+
+| Command                   | Action                                           |
+| :------------------------ | :----------------------------------------------- |
+| `npm install`             | Installs dependencies                            |
+| `npm run dev`             | Starts local dev server at `localhost:4321`      |
+| `npm run build`           | Build your production site to `./dist/`          |
+| `npm run preview`         | Preview your build locally, before deploying     |
+| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
+| `npm run astro -- --help` | Get help using the Astro CLI                     |
+
+## 👀 Want to learn more?
+
+Check out [Starlight’s docs](https://starlight.astro.build/), read [the Astro documentation](https://docs.astro.build), or jump into the [Astro Discord server](https://astro.build/chat).

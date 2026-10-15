@@ -1,0 +1,27 @@
+---
+title: 'Module SDK API Reference'
+description: 'Complete API reference for Module SDK'
+---
+
+# Module SDK API
+
+## Core Traits
+
+### `Module`
+
+```rust
+pub trait Module: Send + Sync {
+    fn name(&self) -> &str;
+    fn version(&self) -> &str;
+    fn init(&mut self, ctx: &ModuleContext) -> Result<()>;
+}
+```
+
+### `ModuleContext`
+
+Provides access to Lumen internals...
+
+## Macros
+
+- `#[lumen_module]` - Register a module
+- `#[lumen_hook]` - Register lifecycle hooks
