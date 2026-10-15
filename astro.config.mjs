@@ -45,9 +45,6 @@ export default defineConfig({
 					label: 'Rust API Docs',
 					items: [
 						{ label: 'Lumen', link: '/rust/lumen/' },
-						{ label: 'Module SDK', link: '/rust/module-sdk/' },
-						{ label: 'Community Modules', link: '/rust/community-modules/' },
-						{ label: 'Locales', link: '/rust/lumen-locales/' },
 					],
 				},
 			],
