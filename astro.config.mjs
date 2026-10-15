@@ -51,6 +51,7 @@ export default defineConfig({
 			editLink: {
 				baseUrl: 'https://github.com/Lumen-media/docs/edit/main/',
 			},
+			customCss: ['./src/styles/design-tokens.css'],
 		}),
 	],
 });
