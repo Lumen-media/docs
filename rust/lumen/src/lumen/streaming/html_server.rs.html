@@ -273,52 +273,71 @@
 <a href=#273 id=273 data-nosnippet>273</a>  &lt;script&gt;
 <a href=#274 id=274 data-nosnippet>274</a>    const root = document.getElementById('root');
 <a href=#275 id=275 data-nosnippet>275</a>    const text = document.getElementById('text');
-<a href=#276 id=276 data-nosnippet>276</a>    function clearSlide() {
-<a href=#277 id=277 data-nosnippet>277</a>      root.style.background = '#000';
-<a href=#278 id=278 data-nosnippet>278</a>      text.innerHTML = '';
-<a href=#279 id=279 data-nosnippet>279</a>    }
-<a href=#280 id=280 data-nosnippet>280</a>    function applySlide(payload) {
-<a href=#281 id=281 data-nosnippet>281</a>      root.style.opacity = '0';
-<a href=#282 id=282 data-nosnippet>282</a>      window.setTimeout(() =&gt; {
-<a href=#283 id=283 data-nosnippet>283</a>        document.documentElement.style.setProperty('--font-family', payload.font || 'Inter, Segoe UI, sans-serif');
-<a href=#284 id=284 data-nosnippet>284</a>        document.documentElement.style.setProperty('--font-size', `${payload.font_size || 48}px`);
-<a href=#285 id=285 data-nosnippet>285</a>        document.documentElement.style.setProperty('--text-align', payload.alignment || 'center');
-<a href=#286 id=286 data-nosnippet>286</a>        const background = payload.background || '#000000';
-<a href=#287 id=287 data-nosnippet>287</a>        if (background.startsWith('#')) {
-<a href=#288 id=288 data-nosnippet>288</a>          root.style.background = background;
-<a href=#289 id=289 data-nosnippet>289</a>        } else {
-<a href=#290 id=290 data-nosnippet>290</a>          root.style.background = `#000 url("${background}") center/cover no-repeat`;
-<a href=#291 id=291 data-nosnippet>291</a>        }
-<a href=#292 id=292 data-nosnippet>292</a>        text.innerHTML = '';
-<a href=#293 id=293 data-nosnippet>293</a>        for (const line of payload.lines || []) {
-<a href=#294 id=294 data-nosnippet>294</a>          const div = document.createElement('div');
-<a href=#295 id=295 data-nosnippet>295</a>          div.className = 'line';
-<a href=#296 id=296 data-nosnippet>296</a>          div.textContent = line;
-<a href=#297 id=297 data-nosnippet>297</a>          text.appendChild(div);
-<a href=#298 id=298 data-nosnippet>298</a>        }
-<a href=#299 id=299 data-nosnippet>299</a>        root.style.opacity = '1';
-<a href=#300 id=300 data-nosnippet>300</a>      }, 250);
-<a href=#301 id=301 data-nosnippet>301</a>    }
-<a href=#302 id=302 data-nosnippet>302</a>    function connect() {
-<a href=#303 id=303 data-nosnippet>303</a>      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-<a href=#304 id=304 data-nosnippet>304</a>      const ws = new WebSocket(`${protocol}://${window.location.host}/ws`);
-<a href=#305 id=305 data-nosnippet>305</a>      ws.onmessage = (event) =&gt; {
-<a href=#306 id=306 data-nosnippet>306</a>        try {
-<a href=#307 id=307 data-nosnippet>307</a>          const payload = JSON.parse(event.data);
-<a href=#308 id=308 data-nosnippet>308</a>          if (payload.type === 'blank' || payload.active === false) {
-<a href=#309 id=309 data-nosnippet>309</a>            clearSlide();
-<a href=#310 id=310 data-nosnippet>310</a>            return;
-<a href=#311 id=311 data-nosnippet>311</a>          }
-<a href=#312 id=312 data-nosnippet>312</a>          if (payload.type === 'slide') {
-<a href=#313 id=313 data-nosnippet>313</a>            applySlide(payload);
-<a href=#314 id=314 data-nosnippet>314</a>          }
-<a href=#315 id=315 data-nosnippet>315</a>        } catch (_) {}
-<a href=#316 id=316 data-nosnippet>316</a>      };
-<a href=#317 id=317 data-nosnippet>317</a>      ws.onclose = () =&gt; window.setTimeout(connect, 1000);
-<a href=#318 id=318 data-nosnippet>318</a>    }
-<a href=#319 id=319 data-nosnippet>319</a>    connect();
-<a href=#320 id=320 data-nosnippet>320</a>  &lt;/script&gt;
-<a href=#321 id=321 data-nosnippet>321</a>&lt;/body&gt;
-<a href=#322 id=322 data-nosnippet>322</a>&lt;/html&gt;
-<a href=#323 id=323 data-nosnippet>323</a>"#</span>;
+<a href=#276 id=276 data-nosnippet>276</a>    function generatorPoster(ref) {
+<a href=#277 id=277 data-nosnippet>277</a>      const hex = (value) =&gt; typeof value === 'string' &amp;&amp; /^#[0-9a-fA-F]{3,8}$/.test(value);
+<a href=#278 id=278 data-nosnippet>278</a>      const colorA = '#0b1020';
+<a href=#279 id=279 data-nosnippet>279</a>      const colorB = '#1a1030';
+<a href=#280 id=280 data-nosnippet>280</a>      try {
+<a href=#281 id=281 data-nosnippet>281</a>        const encoded = new URLSearchParams(ref.split('?')[1] || '').get('p');
+<a href=#282 id=282 data-nosnippet>282</a>        if (!encoded) return null;
+<a href=#283 id=283 data-nosnippet>283</a>        const normalized = encoded.replace(/-/g, '+').replace(/_/g, '/');
+<a href=#284 id=284 data-nosnippet>284</a>        const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, '=');
+<a href=#285 id=285 data-nosnippet>285</a>        const params = JSON.parse(atob(padded));
+<a href=#286 id=286 data-nosnippet>286</a>        return `linear-gradient(135deg, ${hex(params.colorA) ? params.colorA : colorA}, ${hex(params.colorB) ? params.colorB : colorB})`;
+<a href=#287 id=287 data-nosnippet>287</a>      } catch (_error) {
+<a href=#288 id=288 data-nosnippet>288</a>        return null;
+<a href=#289 id=289 data-nosnippet>289</a>      }
+<a href=#290 id=290 data-nosnippet>290</a>    }
+<a href=#291 id=291 data-nosnippet>291</a>    function clearSlide() {
+<a href=#292 id=292 data-nosnippet>292</a>      root.style.background = '#000';
+<a href=#293 id=293 data-nosnippet>293</a>      text.innerHTML = '';
+<a href=#294 id=294 data-nosnippet>294</a>    }
+<a href=#295 id=295 data-nosnippet>295</a>    function applySlide(payload) {
+<a href=#296 id=296 data-nosnippet>296</a>      root.style.opacity = '0';
+<a href=#297 id=297 data-nosnippet>297</a>      window.setTimeout(() =&gt; {
+<a href=#298 id=298 data-nosnippet>298</a>        document.documentElement.style.setProperty('--font-family', payload.font || 'Inter, Segoe UI, sans-serif');
+<a href=#299 id=299 data-nosnippet>299</a>        document.documentElement.style.setProperty('--font-size', `${payload.font_size || 48}px`);
+<a href=#300 id=300 data-nosnippet>300</a>        document.documentElement.style.setProperty('--text-align', payload.alignment || 'center');
+<a href=#301 id=301 data-nosnippet>301</a>        const background = payload.background || '#000000';
+<a href=#302 id=302 data-nosnippet>302</a>        if (background.startsWith('#')) {
+<a href=#303 id=303 data-nosnippet>303</a>          root.style.background = background;
+<a href=#304 id=304 data-nosnippet>304</a>        } else if (background.startsWith('lumen-bg://')) {
+<a href=#305 id=305 data-nosnippet>305</a>          // Generators are desktop-only: phones get a static poster built from the
+<a href=#306 id=306 data-nosnippet>306</a>          // preset palette so the slide still reads instead of showing black.
+<a href=#307 id=307 data-nosnippet>307</a>          root.style.background = generatorPoster(background) || '#0b1020';
+<a href=#308 id=308 data-nosnippet>308</a>        } else {
+<a href=#309 id=309 data-nosnippet>309</a>          root.style.background = `#000 url("${background}") center/cover no-repeat`;
+<a href=#310 id=310 data-nosnippet>310</a>        }
+<a href=#311 id=311 data-nosnippet>311</a>        text.innerHTML = '';
+<a href=#312 id=312 data-nosnippet>312</a>        for (const line of payload.lines || []) {
+<a href=#313 id=313 data-nosnippet>313</a>          const div = document.createElement('div');
+<a href=#314 id=314 data-nosnippet>314</a>          div.className = 'line';
+<a href=#315 id=315 data-nosnippet>315</a>          div.textContent = line;
+<a href=#316 id=316 data-nosnippet>316</a>          text.appendChild(div);
+<a href=#317 id=317 data-nosnippet>317</a>        }
+<a href=#318 id=318 data-nosnippet>318</a>        root.style.opacity = '1';
+<a href=#319 id=319 data-nosnippet>319</a>      }, 250);
+<a href=#320 id=320 data-nosnippet>320</a>    }
+<a href=#321 id=321 data-nosnippet>321</a>    function connect() {
+<a href=#322 id=322 data-nosnippet>322</a>      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+<a href=#323 id=323 data-nosnippet>323</a>      const ws = new WebSocket(`${protocol}://${window.location.host}/ws`);
+<a href=#324 id=324 data-nosnippet>324</a>      ws.onmessage = (event) =&gt; {
+<a href=#325 id=325 data-nosnippet>325</a>        try {
+<a href=#326 id=326 data-nosnippet>326</a>          const payload = JSON.parse(event.data);
+<a href=#327 id=327 data-nosnippet>327</a>          if (payload.type === 'blank' || payload.active === false) {
+<a href=#328 id=328 data-nosnippet>328</a>            clearSlide();
+<a href=#329 id=329 data-nosnippet>329</a>            return;
+<a href=#330 id=330 data-nosnippet>330</a>          }
+<a href=#331 id=331 data-nosnippet>331</a>          if (payload.type === 'slide') {
+<a href=#332 id=332 data-nosnippet>332</a>            applySlide(payload);
+<a href=#333 id=333 data-nosnippet>333</a>          }
+<a href=#334 id=334 data-nosnippet>334</a>        } catch (_) {}
+<a href=#335 id=335 data-nosnippet>335</a>      };
+<a href=#336 id=336 data-nosnippet>336</a>      ws.onclose = () =&gt; window.setTimeout(connect, 1000);
+<a href=#337 id=337 data-nosnippet>337</a>    }
+<a href=#338 id=338 data-nosnippet>338</a>    connect();
+<a href=#339 id=339 data-nosnippet>339</a>  &lt;/script&gt;
+<a href=#340 id=340 data-nosnippet>340</a>&lt;/body&gt;
+<a href=#341 id=341 data-nosnippet>341</a>&lt;/html&gt;
+<a href=#342 id=342 data-nosnippet>342</a>"#</span>;
 </code></pre></div></section></main></body></html>

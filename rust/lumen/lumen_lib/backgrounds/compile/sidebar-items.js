@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":["DISPLAY","PRELUDE","VERTEX"],"fn":["compile_catalog","compile_wgsl","generate_typescript","sampler_uniform","uniform_block","write_generated"],"struct":["CompiledEffect","CompiledPass"]};

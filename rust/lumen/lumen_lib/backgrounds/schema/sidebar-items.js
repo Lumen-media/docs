@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["Category","CostHint","ParamGroup","ParamKind","ParamScale","ParamValue"],"struct":["EffectDef","EnumOption","ParamSpec","PassDef","UniformLayout"]};

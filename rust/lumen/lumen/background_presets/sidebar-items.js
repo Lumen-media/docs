@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"fn":["bg_preset_delete","bg_preset_list","bg_preset_save","builtin_presets","default_version","is_hex_color","normalize","params","presets_dir","safe_id"],"struct":["GeneratorPreset"]};
